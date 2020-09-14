@@ -1,6 +1,7 @@
 import com.google.cloud.opentelemetry.trace.TraceConfiguration;
 import com.google.cloud.opentelemetry.trace.TraceExporter;
 import io.opentelemetry.OpenTelemetry;
+import io.opentelemetry.context.Scope;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.trace.Span;
@@ -28,11 +29,16 @@ public class OpenTelemetryApp {
 
   private void myUseCase() {
     Span span = this.tracer.spanBuilder("OpenTelemetry: Start my use case").startSpan();
-    span.addEvent("OpenTelemetry: Event 0");
-    doWork();
-    OpenTelemetryApp2.getCalled();
-    span.addEvent("OpenTelemetry: Event 1");
-    span.end();
+    try(Scope scope = tracer.withSpan(span)){
+      span.addEvent("OpenTelemetry: Event 0");
+      doWork();
+      OpenTelemetryApp2.getCalled();
+//    OpenCensusApp.getCalled();
+      span.addEvent("OpenTelemetry: Event 1");
+    } finally {
+      span.end();
+    }
+
   }
 
   private void doWork() {
@@ -47,6 +53,5 @@ public class OpenTelemetryApp {
     OpenTelemetryApp example = new OpenTelemetryApp();
     example.setupTraceExporter();
     example.myUseCase();
-//    OpenCensusApp.getCalled();
   }
 }

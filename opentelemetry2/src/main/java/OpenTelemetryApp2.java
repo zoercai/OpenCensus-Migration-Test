@@ -3,6 +3,7 @@ import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.Tracer;
 
 public class OpenTelemetryApp2 {
+
   private Tracer tracer = OpenTelemetry.getTracer("io.opentelemetry.example.TraceExporterExample2");
 
   private void myUseCase() {
