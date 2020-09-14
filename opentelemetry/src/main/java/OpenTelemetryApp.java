@@ -30,6 +30,7 @@ public class OpenTelemetryApp {
     Span span = this.tracer.spanBuilder("OpenTelemetry: Start my use case").startSpan();
     span.addEvent("OpenTelemetry: Event 0");
     doWork();
+    OpenTelemetryApp2.getCalled();
     span.addEvent("OpenTelemetry: Event 1");
     span.end();
   }
@@ -46,7 +47,6 @@ public class OpenTelemetryApp {
     OpenTelemetryApp example = new OpenTelemetryApp();
     example.setupTraceExporter();
     example.myUseCase();
-    OpenCensusApp.getCalled();
-//    OpenTelemetryApp2.getCalled();
+//    OpenCensusApp.getCalled();
   }
 }
