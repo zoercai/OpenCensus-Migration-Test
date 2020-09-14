@@ -1,0 +1,4 @@
+rootProject.name = 'OpenCensusMigrationTest'
+include 'opentelemetry'
+include 'opencensus'
+
