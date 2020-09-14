@@ -1,4 +1,5 @@
 rootProject.name = 'OpenCensusMigrationTest'
 include 'opentelemetry'
 include 'opencensus'
+include 'opentelemetry2'
 

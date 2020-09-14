@@ -8,10 +8,11 @@ import io.opentelemetry.trace.Tracer;
 import java.io.IOException;
 import java.time.Duration;
 
-public class OpenTelemetryApp {
+public class OpenTelemetryApp2 {
+
   private TraceExporter traceExporter;
 
-  private Tracer tracer = OpenTelemetry.getTracer("io.opentelemetry.example.TraceExporterExample");
+  private Tracer tracer = OpenTelemetry.getTracer("io.opentelemetry.example.TraceExporterExample2");
 
   private void setupTraceExporter() {
     TraceConfiguration configuration =
@@ -27,10 +28,10 @@ public class OpenTelemetryApp {
   }
 
   private void myUseCase() {
-    Span span = this.tracer.spanBuilder("OpenTelemetry: Start my use case").startSpan();
-    span.addEvent("OpenTelemetry: Event 0");
+    Span span = this.tracer.spanBuilder("OpenTelemetry2: Start my use case").startSpan();
+    span.addEvent("OpenTelemetry2: Event 0");
     doWork();
-    span.addEvent("OpenTelemetry: Event 1");
+    span.addEvent("OpenTelemetry2: Event 1");
     span.end();
   }
 
@@ -42,11 +43,9 @@ public class OpenTelemetryApp {
     }
   }
 
-  public static void main(String[] args) throws IOException {
-    OpenTelemetryApp example = new OpenTelemetryApp();
+  public static void getCalled() {
+    OpenTelemetryApp2 example = new OpenTelemetryApp2();
     example.setupTraceExporter();
     example.myUseCase();
-    OpenCensusApp.getCalled();
-//    OpenTelemetryApp2.getCalled();
   }
 }
