@@ -33,7 +33,7 @@ public class OpenTelemetryApp {
       span.addEvent("OpenTelemetry: Event 0");
       doWork();
 //      OpenTelemetryApp2.getCalled();
-      OpenCensusApp.getCalled();
+      OpenCensusLibrary.getCalled();
       span.addEvent("OpenTelemetry: Event 1");
     } finally {
       span.end();

@@ -8,7 +8,7 @@ import io.opencensus.trace.config.TraceParams;
 import io.opencensus.trace.samplers.Samplers;
 import java.io.IOException;
 
-public class OpenCensusApp {
+public class OpenCensusLibrary {
 
   private static final Tracer tracer = Tracing.getTracer();
 

@@ -2,7 +2,7 @@ import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.Tracer;
 
-public class OpenTelemetryApp2 {
+public class OpenTelemetryLibrary {
 
   private Tracer tracer = OpenTelemetry.getTracer("io.opentelemetry.example.TraceExporterExample2");
 
@@ -23,7 +23,7 @@ public class OpenTelemetryApp2 {
   }
 
   public static void getCalled() {
-    OpenTelemetryApp2 example = new OpenTelemetryApp2();
+    OpenTelemetryLibrary example = new OpenTelemetryLibrary();
     example.myUseCase();
   }
 }
