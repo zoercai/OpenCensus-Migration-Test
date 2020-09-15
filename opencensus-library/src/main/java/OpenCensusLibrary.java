@@ -1,10 +1,6 @@
-import io.opencensus.exporter.trace.stackdriver.StackdriverTraceConfiguration;
-import io.opencensus.exporter.trace.stackdriver.StackdriverTraceExporter;
 import io.opencensus.trace.Span;
 import io.opencensus.trace.Tracer;
 import io.opencensus.trace.Tracing;
-import io.opencensus.trace.config.TraceConfig;
-import io.opencensus.trace.config.TraceParams;
 import io.opencensus.trace.samplers.Samplers;
 import java.io.IOException;
 
@@ -12,15 +8,7 @@ public class OpenCensusLibrary {
 
   private static final Tracer tracer = Tracing.getTracer();
 
-  public static void getCalled() {
-//    StackdriverTraceExporter.createAndRegister(
-//        StackdriverTraceConfiguration.builder()
-//            .build());
-//    TraceConfig traceConfig = Tracing.getTraceConfig();
-//    TraceParams activeTraceParams = traceConfig.getActiveTraceParams();
-//    traceConfig.updateActiveTraceParams(
-//        activeTraceParams.toBuilder().setSampler(
-//            Samplers.alwaysSample()).build());
+  public static void getCalled() throws IOException {
     Span span = tracer.spanBuilder("OpenCensusSpan")
         .setRecordEvents(true)
         .setSampler(Samplers.alwaysSample())

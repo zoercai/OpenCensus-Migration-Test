@@ -1,5 +1,11 @@
 import com.google.cloud.opentelemetry.trace.TraceConfiguration;
 import com.google.cloud.opentelemetry.trace.TraceExporter;
+import io.opencensus.exporter.trace.stackdriver.StackdriverTraceConfiguration;
+import io.opencensus.exporter.trace.stackdriver.StackdriverTraceExporter;
+import io.opencensus.trace.Tracing;
+import io.opencensus.trace.config.TraceConfig;
+import io.opencensus.trace.config.TraceParams;
+import io.opencensus.trace.samplers.Samplers;
 import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
@@ -10,6 +16,7 @@ import java.io.IOException;
 import java.time.Duration;
 
 public class OpenTelemetryApp {
+
   private TraceExporter traceExporter;
 
   private Tracer tracer = OpenTelemetry.getTracer("io.opentelemetry.example.TraceExporterExample");
@@ -27,9 +34,9 @@ public class OpenTelemetryApp {
     }
   }
 
-  private void myUseCase() {
+  private void myUseCase() throws IOException {
     Span span = this.tracer.spanBuilder("OpenTelemetry: Start my use case").startSpan();
-    try(Scope scope = tracer.withSpan(span)){
+    try (Scope scope = tracer.withSpan(span)) {
       span.addEvent("OpenTelemetry: Event 0");
       doWork();
 //      OpenTelemetryApp2.getCalled();
@@ -38,7 +45,6 @@ public class OpenTelemetryApp {
     } finally {
       span.end();
     }
-
   }
 
   private void doWork() {
@@ -49,8 +55,23 @@ public class OpenTelemetryApp {
     }
   }
 
+  private static void setupOpenCensus() throws IOException {
+    StackdriverTraceExporter.createAndRegister(
+        StackdriverTraceConfiguration.builder().setDeadline(io.opencensus.common.Duration.create(60, 0))
+            .build());
+    TraceConfig traceConfig = Tracing.getTraceConfig();
+    TraceParams activeTraceParams = traceConfig.getActiveTraceParams();
+    traceConfig.updateActiveTraceParams(
+        activeTraceParams.toBuilder().setSampler(
+            Samplers.alwaysSample()).build());
+    System.out.println("Finished setting up opencensus.");
+  }
+
   public static void main(String[] args) throws IOException {
     OpenTelemetryApp example = new OpenTelemetryApp();
+    if (System.getenv("OPENCENSUS_SETUP") != null && System.getenv("OPENCENSUS_SETUP").equalsIgnoreCase("true")) {
+      setupOpenCensus();
+    }
     example.setupTraceExporter();
     example.myUseCase();
   }
