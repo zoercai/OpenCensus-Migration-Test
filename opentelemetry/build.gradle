@@ -15,8 +15,8 @@ dependencies {
     compile "io.opentelemetry:opentelemetry-sdk:0.7.0"
     compile "com.google.cloud:google-cloud-trace:1.0.2"
     compile "com.google.cloud.opentelemetry:exporter-trace:0.7.1"
-    compile project(':opentelemetry2')
-    compile project(':opencensus')
+    compile project(':opentelemetry-library')
+    compile project(':opencensus-library')
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
