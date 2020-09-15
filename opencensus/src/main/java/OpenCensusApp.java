@@ -12,16 +12,15 @@ public class OpenCensusApp {
 
   private static final Tracer tracer = Tracing.getTracer();
 
-  public static void getCalled() throws IOException {
-    StackdriverTraceExporter.createAndRegister(
-        StackdriverTraceConfiguration.builder()
-            .build());
-    TraceConfig traceConfig = Tracing.getTraceConfig();
-    TraceParams activeTraceParams = traceConfig.getActiveTraceParams();
-    traceConfig.updateActiveTraceParams(
-        activeTraceParams.toBuilder().setSampler(
-            Samplers.alwaysSample()).build());
-
+  public static void getCalled() {
+//    StackdriverTraceExporter.createAndRegister(
+//        StackdriverTraceConfiguration.builder()
+//            .build());
+//    TraceConfig traceConfig = Tracing.getTraceConfig();
+//    TraceParams activeTraceParams = traceConfig.getActiveTraceParams();
+//    traceConfig.updateActiveTraceParams(
+//        activeTraceParams.toBuilder().setSampler(
+//            Samplers.alwaysSample()).build());
     Span span = tracer.spanBuilder("OpenCensusSpan")
         .setRecordEvents(true)
         .setSampler(Samplers.alwaysSample())

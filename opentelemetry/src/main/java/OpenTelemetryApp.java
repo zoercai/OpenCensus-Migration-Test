@@ -32,8 +32,8 @@ public class OpenTelemetryApp {
     try(Scope scope = tracer.withSpan(span)){
       span.addEvent("OpenTelemetry: Event 0");
       doWork();
-      OpenTelemetryApp2.getCalled();
-//    OpenCensusApp.getCalled();
+//      OpenTelemetryApp2.getCalled();
+      OpenCensusApp.getCalled();
       span.addEvent("OpenTelemetry: Event 1");
     } finally {
       span.end();
