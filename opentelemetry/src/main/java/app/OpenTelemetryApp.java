@@ -1,5 +1,8 @@
+package app;
+
 import com.google.cloud.opentelemetry.trace.TraceConfiguration;
 import com.google.cloud.opentelemetry.trace.TraceExporter;
+import exporter.OtelExporter;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceConfiguration;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceExporter;
 import io.opencensus.trace.Tracing;
@@ -14,6 +17,7 @@ import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.Tracer;
 import java.io.IOException;
 import java.time.Duration;
+import library.OpenCensusLibrary;
 
 public class OpenTelemetryApp {
 
@@ -39,7 +43,6 @@ public class OpenTelemetryApp {
     try (Scope scope = tracer.withSpan(span)) {
       span.addEvent("OpenTelemetry: Event 0");
       doWork();
-//      OpenTelemetryApp2.getCalled();
       OpenCensusLibrary.getCalled();
       span.addEvent("OpenTelemetry: Event 1");
     } finally {
@@ -56,14 +59,15 @@ public class OpenTelemetryApp {
   }
 
   private static void setupOpenCensus() throws IOException {
-    StackdriverTraceExporter.createAndRegister(
-        StackdriverTraceConfiguration.builder().setDeadline(io.opencensus.common.Duration.create(60, 0))
-            .build());
-    TraceConfig traceConfig = Tracing.getTraceConfig();
-    TraceParams activeTraceParams = traceConfig.getActiveTraceParams();
-    traceConfig.updateActiveTraceParams(
-        activeTraceParams.toBuilder().setSampler(
-            Samplers.alwaysSample()).build());
+//    StackdriverTraceExporter.createAndRegister(
+//        StackdriverTraceConfiguration.builder().setDeadline(io.opencensus.common.Duration.create(60, 0))
+//            .build());
+//    TraceConfig traceConfig = Tracing.getTraceConfig();
+//    TraceParams activeTraceParams = traceConfig.getActiveTraceParams();
+//    traceConfig.updateActiveTraceParams(
+//        activeTraceParams.toBuilder().setSampler(
+//            Samplers.alwaysSample()).build());
+    OtelExporter.createAndRegister();
     System.out.println("Finished setting up opencensus.");
   }
 
