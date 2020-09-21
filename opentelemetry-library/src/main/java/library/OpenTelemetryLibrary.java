@@ -1,3 +1,5 @@
+package library;
+
 import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.trace.Span;
 import io.opentelemetry.trace.Tracer;
@@ -7,10 +9,10 @@ public class OpenTelemetryLibrary {
   private Tracer tracer = OpenTelemetry.getTracer("io.opentelemetry.example.TraceExporterExample2");
 
   private void myUseCase() {
-    Span span = this.tracer.spanBuilder("OpenTelemetry2: Start my use case").startSpan();
-    span.addEvent("OpenTelemetry2: Event 0");
+    Span span = this.tracer.spanBuilder("OpenTelemetry-Library: Start my use case").startSpan();
+    span.addEvent("OpenTelemetry-Library: Event 0");
     doWork();
-    span.addEvent("OpenTelemetry2: Event 1");
+    span.addEvent("OpenTelemetry-Library: Event 1");
     span.end();
   }
 
