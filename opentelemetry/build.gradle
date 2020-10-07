@@ -6,6 +6,7 @@ group 'org.example'
 version '1.0-SNAPSHOT'
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -14,10 +15,12 @@ dependencies {
     compile "io.opentelemetry:opentelemetry-api:0.7.0"
     compile "io.opentelemetry:opentelemetry-sdk:0.7.0"
     compile "com.google.cloud:google-cloud-trace:1.0.2"
-    compile "com.google.cloud.opentelemetry:exporter-trace:0.7.1"
+    compile "com.google.cloud.opentelemetry:exporter-trace:0.8.0-SNAPSHOT"
+//    compile "com.google.cloud.opentelemetry:exporter-trace:0.7.1"
     compile 'io.opencensus:opencensus-api:0.27.0'
     compile 'io.opencensus:opencensus-impl:0.27.0'
     compile 'io.opencensus:opencensus-exporter-trace-stackdriver:0.27.0'
+    compile group: 'io.opentelemetry', name: 'opentelemetry-exporters-logging', version: '0.8.0'
     compile project(':opentelemetry-library')
     compile project(':opencensus-library')
     testCompile group: 'junit', name: 'junit', version: '4.12'
