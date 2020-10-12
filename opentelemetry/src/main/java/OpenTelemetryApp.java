@@ -1,5 +1,6 @@
 import com.google.cloud.opentelemetry.trace.TraceConfiguration;
 import com.google.cloud.opentelemetry.trace.TraceExporter;
+import io.opencensus.exporter.trace.logging.LoggingTraceExporter;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceConfiguration;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceExporter;
 import io.opencensus.trace.Tracing;
@@ -29,28 +30,29 @@ public class OpenTelemetryApp {
     TraceConfiguration configuration =
         TraceConfiguration.builder().setDeadline(Duration.ofMillis(900000)).build();
 
-    try {
-      this.traceExporter = TraceExporter.createWithConfiguration(configuration);
-      spanProcessor = SimpleSpanProcessor.newBuilder(this.traceExporter).build();
-      OpenTelemetrySdk.getTracerProvider().addSpanProcessor(spanProcessor);
-    } catch (IOException e) {
-      System.out.println("Uncaught Exception");
-    }
-//    LoggingSpanExporter spanExporter = new LoggingSpanExporter();
-//    spanProcessor = SimpleSpanProcessor.newBuilder(spanExporter).build();
-//    OpenTelemetrySdk.getTracerProvider().addSpanProcessor(spanProcessor);
+//    try {
+//      this.traceExporter = TraceExporter.createWithConfiguration(configuration);
+//      spanProcessor = SimpleSpanProcessor.newBuilder(this.traceExporter).build();
+//      OpenTelemetrySdk.getTracerProvider().addSpanProcessor(spanProcessor);
+//    } catch (IOException e) {
+//      System.out.println("Uncaught Exception");
+//    }
+    LoggingSpanExporter spanExporter = new LoggingSpanExporter();
+    spanProcessor = SimpleSpanProcessor.newBuilder(spanExporter).build();
+    OpenTelemetrySdk.getTracerProvider().addSpanProcessor(spanProcessor);
   }
 
   private static void setupOpenCensusExporter() throws IOException {
-    StackdriverTraceExporter.createAndRegister(
-        StackdriverTraceConfiguration.builder()
-            .setDeadline(io.opencensus.common.Duration.create(60, 0))
-            .build());
-    TraceConfig traceConfig = Tracing.getTraceConfig();
-    TraceParams activeTraceParams = traceConfig.getActiveTraceParams();
-    traceConfig.updateActiveTraceParams(
-        activeTraceParams.toBuilder().setSampler(Samplers.alwaysSample()).build());
-    System.out.println("Finished setting up opencensus.");
+    LoggingTraceExporter.register();
+//    StackdriverTraceExporter.createAndRegister(
+//        StackdriverTraceConfiguration.builder()
+//            .setDeadline(io.opencensus.common.Duration.create(60, 0))
+//            .build());
+//    TraceConfig traceConfig = Tracing.getTraceConfig();
+//    TraceParams activeTraceParams = traceConfig.getActiveTraceParams();
+//    traceConfig.updateActiveTraceParams(
+//        activeTraceParams.toBuilder().setSampler(Samplers.alwaysSample()).build());
+//    System.out.println("Finished setting up opencensus.");
   }
 
   private void myUseCase() throws IOException {
@@ -78,7 +80,7 @@ public class OpenTelemetryApp {
 
   public static void main(String[] args) throws IOException {
     OpenTelemetryApp example = new OpenTelemetryApp();
-//    setupOpenCensusExporter();
+    setupOpenCensusExporter();
     example.setupOtelExporter();
     example.myUseCase();
   }

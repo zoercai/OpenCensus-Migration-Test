@@ -4,7 +4,6 @@ import io.opencensus.common.Clock;
 import io.opencensus.impl.internal.DisruptorEventQueue;
 import io.opencensus.impl.trace.internal.ThreadLocalRandomHandler;
 import io.opencensus.implcore.common.MillisClock;
-import io.opencensus.implcore.trace.TraceComponentImplBase;
 import io.opencensus.trace.TraceComponent;
 import io.opencensus.trace.Tracer;
 import io.opencensus.trace.config.TraceConfig;
@@ -13,16 +12,15 @@ import io.opencensus.trace.propagation.PropagationComponent;
 
 /** Java 7 and 8 implementation of the {@link TraceComponent}. */
 public final class TraceComponentImplOtel extends TraceComponent {
-  private final TraceComponentImplBase traceComponentImplBase;
+  private final OtelTracerComponentImplBase traceComponentImplBase;
 
   /** Public constructor to be used with reflection loading. */
   public TraceComponentImplOtel() {
     traceComponentImplBase =
-        new TraceComponentImplBase(
+        new OtelTracerComponentImplBase(
             MillisClock.getInstance(),
             new ThreadLocalRandomHandler(),
-            DisruptorEventQueue.getInstance(),
-            true
+            DisruptorEventQueue.getInstance()
         );
   }
 

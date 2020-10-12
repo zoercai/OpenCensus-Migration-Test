@@ -42,11 +42,27 @@ public class OpenCensusLibrary {
             .startScopedSpan()) {
       Span span = tracer.getCurrentSpan();
       span.addAnnotation("OpenCensus: Doing initial work");
+//      innerScopedSpan();
       span.addAnnotation("OpenCensus: Finished initial work");
       OpenTelemetryLibrary.scopedSpans();
       span.addAnnotation("OpenCensus: Hello world!");
     }
     Tracing.getExportComponent().shutdown();
+  }
+
+  private static void innerScopedSpan() {
+    try (Scope scope =
+        tracer
+            .spanBuilder("OpenCensusSpan Inner")
+            .setRecordEvents(true)
+            .setSampler(Samplers.alwaysSample())
+            .startScopedSpan()) {
+      Span span = tracer.getCurrentSpan();
+      span.addAnnotation("OpenCensus Inner: Doing initial work");
+      span.addAnnotation("OpenCensus Inner: Finished initial work");
+      OpenTelemetryLibrary.scopedSpans();
+      span.addAnnotation("OpenCensus Inner: Hello world!");
+    }
   }
 
   private static void doWork() {
