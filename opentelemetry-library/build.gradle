@@ -6,11 +6,13 @@ group 'org.example'
 version '1.0-SNAPSHOT'
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    compile "com.google.guava:guava:16+"
-    compile "io.opentelemetry:opentelemetry-api:0.7.0"
+    compile 'com.google.guava:guava:16+'
+    compile 'io.opentelemetry:opentelemetry-api:0.1.0-SNAPSHOT'
+    compile 'io.opentelemetry:opentelemetry-context:0.1.0-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

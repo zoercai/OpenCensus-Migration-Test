@@ -1,21 +1,20 @@
 import com.google.cloud.opentelemetry.trace.TraceConfiguration;
 import com.google.cloud.opentelemetry.trace.TraceExporter;
-import io.opencensus.exporter.trace.logging.LoggingTraceExporter;
-import io.opencensus.exporter.trace.stackdriver.StackdriverTraceConfiguration;
-import io.opencensus.exporter.trace.stackdriver.StackdriverTraceExporter;
-import io.opencensus.trace.Tracing;
-import io.opencensus.trace.config.TraceConfig;
-import io.opencensus.trace.config.TraceParams;
-import io.opencensus.trace.samplers.Samplers;
-import io.opentelemetry.OpenTelemetry;
+//import com.google.cloud.spanner.DatabaseClient;
+//import com.google.cloud.spanner.DatabaseId;
+//import com.google.cloud.spanner.ResultSet;
+//import com.google.cloud.spanner.Spanner;
+//import com.google.cloud.spanner.SpannerOptions;
+//import com.google.cloud.spanner.Statement;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.exporters.logging.LoggingSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SpanProcessor;
-import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
-import io.opentelemetry.trace.Span;
-import io.opentelemetry.trace.Tracer;
 import java.io.IOException;
 import java.time.Duration;
 
@@ -23,44 +22,29 @@ public class OpenTelemetryApp {
 
   private TraceExporter traceExporter;
 
-  private Tracer tracer = OpenTelemetry.getTracer("io.opentelemetry.example.TraceExporterExample");
+  private Tracer tracer =
+      OpenTelemetry.getGlobalTracer("io.opentelemetry.example.TraceExporterExample");
   private SpanProcessor spanProcessor;
 
   private void setupOtelExporter() {
     TraceConfiguration configuration =
         TraceConfiguration.builder().setDeadline(Duration.ofMillis(900000)).build();
-
-//    try {
-//      this.traceExporter = TraceExporter.createWithConfiguration(configuration);
-//      spanProcessor = SimpleSpanProcessor.newBuilder(this.traceExporter).build();
-//      OpenTelemetrySdk.getTracerProvider().addSpanProcessor(spanProcessor);
-//    } catch (IOException e) {
-//      System.out.println("Uncaught Exception");
-//    }
-    LoggingSpanExporter spanExporter = new LoggingSpanExporter();
-    spanProcessor = SimpleSpanProcessor.newBuilder(spanExporter).build();
-    OpenTelemetrySdk.getTracerProvider().addSpanProcessor(spanProcessor);
-  }
-
-  private static void setupOpenCensusExporter() throws IOException {
-    LoggingTraceExporter.register();
-//    StackdriverTraceExporter.createAndRegister(
-//        StackdriverTraceConfiguration.builder()
-//            .setDeadline(io.opencensus.common.Duration.create(60, 0))
-//            .build());
-//    TraceConfig traceConfig = Tracing.getTraceConfig();
-//    TraceParams activeTraceParams = traceConfig.getActiveTraceParams();
-//    traceConfig.updateActiveTraceParams(
-//        activeTraceParams.toBuilder().setSampler(Samplers.alwaysSample()).build());
-//    System.out.println("Finished setting up opencensus.");
+    try {
+      this.traceExporter = TraceExporter.createWithConfiguration(configuration);
+      spanProcessor = SimpleSpanProcessor.builder(this.traceExporter).build();
+      OpenTelemetrySdk.getGlobalTracerManagement().addSpanProcessor(spanProcessor);
+    } catch (IOException e) {
+      System.out.println("Uncaught Exception");
+    }
+//        LoggingSpanExporter spanExporter = new LoggingSpanExporter();
+//        spanProcessor = SimpleSpanProcessor.builder(spanExporter).build();
+//        OpenTelemetrySdk.getGlobalTracerManagement().addSpanProcessor(spanProcessor);
   }
 
   private void myUseCase() throws IOException {
-    Span span = this.tracer.spanBuilder("OpenTelemetry App: Start my use case").startSpan();
-    try (Scope scope = tracer.withSpan(span)) {
+    Span span = tracer.spanBuilder("OpenTelemetry App: Start my use case").startSpan();
+    try (Scope scope = Context.current().with(span).makeCurrent()) {
       span.addEvent("OpenTelemetry App: Event 0");
-      doWork();
-      OpenTelemetryLibrary.scopedSpans();
       OpenCensusLibrary.scopedSpans();
       span.addEvent("OpenTelemetry App: Event 1");
     } finally {
@@ -70,17 +54,34 @@ public class OpenTelemetryApp {
     }
   }
 
-  private void doWork() {
-    try {
-      Thread.sleep((int) (Math.random() * 1000) + 1000);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
-  }
+//  private void doSpannerWork() {
+//    SpannerOptions options = SpannerOptions.newBuilder().build();
+//    Spanner spanner = options.getService();
+//
+//    String instanceId = "test-instance";
+//    String databaseId = "example-db";
+//
+//    try {
+//      // Creates a database client
+//      DatabaseClient dbClient =
+//          spanner.getDatabaseClient(DatabaseId.of(options.getProjectId(), instanceId, databaseId));
+//
+//      ResultSet resultSet =
+//          dbClient
+//              .singleUse() // Execute a single read or query against Cloud Spanner.
+//              .executeQuery(Statement.of("SELECT SingerId, AlbumId, AlbumTitle FROM Albums"));
+//      while (resultSet.next()) {
+//        System.out.printf(
+//            "%d %d %s\n", resultSet.getLong(0), resultSet.getLong(1), resultSet.getString(2));
+//      }
+//    } finally {
+//      // Closes the client which will free up the resources used
+//      spanner.close();
+//    }
+//  }
 
   public static void main(String[] args) throws IOException {
     OpenTelemetryApp example = new OpenTelemetryApp();
-    setupOpenCensusExporter();
     example.setupOtelExporter();
     example.myUseCase();
   }

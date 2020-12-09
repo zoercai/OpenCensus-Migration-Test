@@ -1,16 +1,17 @@
-import io.opentelemetry.OpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.trace.Span;
-import io.opentelemetry.trace.Tracer;
 
 public class OpenTelemetryLibrary {
 
   private static Tracer tracer =
-      OpenTelemetry.getTracer("io.opentelemetry.example.TraceExporterExample2");
+      OpenTelemetry.getGlobalTracer("io.opentelemetry.example.TraceExporterExample2");
 
   public static void scopedSpans() {
     Span span = tracer.spanBuilder("OpenTelemetry2: Start my use case").startSpan();
-    try (Scope scope = tracer.withSpan(span)) {
+    try (Scope scope = Context.current().with(span).makeCurrent()) {
       span.addEvent("OpenTelemetry2: Event 0");
       doWork();
       span.addEvent("OpenTelemetry2: Event 1");
